@@ -6,7 +6,8 @@
 
 struct Lexer{
     std::vector<Token> tokens;
-    int analize(std::string line);
+    int analyze(std::string line);
+    void printTokens();
 };
 
 #endif
