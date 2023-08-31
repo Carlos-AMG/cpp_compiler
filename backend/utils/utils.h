@@ -1,0 +1,1 @@
+bool isOperator(char character);
