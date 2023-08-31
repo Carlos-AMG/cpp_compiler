@@ -7,11 +7,8 @@ int Lexer::analyze(std::string line){
     int resultingTokens = 0;
     int lineLen = line.length();
     std::string tokenVal;
-    std::cout << "Line: " << line << " line len: " << lineLen << std::endl;
     for (i=0; i < lineLen; i++){
-        std::cout << i << std::endl;
         if (isspace(line[i])){
-            std::cout << "white space" << std::endl;
             continue;
         }
         if (isdigit((line[i]))){

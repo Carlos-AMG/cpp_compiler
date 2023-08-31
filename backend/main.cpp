@@ -8,7 +8,8 @@ int main(){
     std::getline(std::cin, line);
     // std::cout << line;
     lex1.analyze(line);
-    // lex1.printTokens();
+    std::cout << "Tokens: " << std::endl;
+    lex1.printTokens();
 
     return 0;
 }
