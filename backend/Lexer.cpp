@@ -23,7 +23,6 @@ int Lexer::analyze(std::string line){
                     break;
                 numericVal += line[j];
             }
-            // std::cout << "klajsldkfja: " << j << std::endl;
             i = j - 1; // Move i to the last digit of the integer
             this->tokens.push_back(Token("INTEGER", numericVal));
             resultingTokens++;
@@ -43,4 +42,8 @@ void Lexer::printTokens(){
     for (auto token : this->tokens){
         std::cout << "Token: " << token.name << ", Value: " << token.value << std::endl;
     }
+}
+
+std::vector<Token> Lexer::getTokens(){
+    return this->tokens;
 }

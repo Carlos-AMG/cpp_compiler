@@ -8,6 +8,7 @@ struct Lexer{
     std::vector<Token> tokens;
     int analyze(std::string line);
     void printTokens();
+    std::vector<Token> getTokens();
 };
 
 #endif

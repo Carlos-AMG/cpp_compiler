@@ -1,0 +1,1 @@
+gui pending with pyqt, bindings for lexer are done and gui.py is just an example on how to use such bindings
