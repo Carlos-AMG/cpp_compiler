@@ -1,0 +1,18 @@
+//A continuacion se enlistan los simbolos que reconocera nuestro analizador lexico
+
+identificador: letra(letra|digito)*
+entero: Digito*
+Real:entero.entero
+operador de adicción: +|-
+Operador de multiplicación: *|/
+Operador de asignacion: =
+Operador relacional: <|> <=|>= |!=|==
+operador and: &&
+Operador or: ||
+Operador Not: !
+Parentesis: (,)
+Llave: {,}
+Punto y coma: ;
+Reservadas varias: if,while,return,else,int,float
+
+
