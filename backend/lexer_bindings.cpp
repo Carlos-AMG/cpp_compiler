@@ -6,7 +6,7 @@
 namespace py = pybind11;
 constexpr auto byref = py::return_value_policy::reference_internal;
 
-
+//bindings para mapear objetos (Lexer/Token a objetos de python)
 PYBIND11_MODULE(lexer_module, m) {
     py::class_<Lexer>(m, "Lexer")
         // .def(py::init<>()) // Not useful but we could add init params

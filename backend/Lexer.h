@@ -5,6 +5,8 @@
 #include "Token.h"
 #include <regex>
 
+// declaracion de clase Lexer la cual contiene una lista de tokens, la cual la funcion de analizar llenara con los respectivos tokens
+// adicionalmente contiene las expresiones regulares para los diferentes tokens
 struct Lexer{
     std::vector<Token> tokens;
     int analyze(std::string line);

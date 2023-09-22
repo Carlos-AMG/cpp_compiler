@@ -3,18 +3,18 @@ import  lexer_module
 
 lex1 = lexer_module.Lexer()
 
+# funcion que recibe un texto desde la gui y se lo manda a procesasar a la funcion de analyze del lexer
+# una vez el analisis lexico termina, imprimimos en la gui los tokens que hemos encontrado en la cadena
 def lexer():
     output_textbox.delete("1.0", "end")
     lex1 = lexer_module.Lexer()
     input_text = input_textbox.get("1.0", "end-1c")
     lex1.analyze(input_text)
-    # words = input_text.split()
     output_textbox.delete("1.0", "end")
-    # for word in lex1.tokens:
-    #     output_textbox.insert("end", word + "\n")
     for token in lex1.tokens:
         output_textbox.insert("end", f"Token: {token.name}, value: {token.value}\n")
 
+# funcion para limpiar tanto la entrada de datos como la salida de datos
 def clear_textboxes():
     input_textbox.delete("1.0", "end")
     output_textbox.delete("1.0", "end")
