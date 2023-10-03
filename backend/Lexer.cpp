@@ -2,12 +2,12 @@
 #include "utils/utils.h"
 #include <iostream>
 #include <regex>
-
+#include <unordered_map>
 
 // Definimos e inicializamos las expresiones regulares de los tokens
 const std::regex Lexer::identifierRegex("[a-zA-Z][a-zA-Z0-9]*");
 const std::regex Lexer::integerRegex("[0-9]+");
-const std::regex Lexer::realRegex("[0-9]+\\.[0-9]+");
+const std::regex Lexer::floatRegex("[0-9]+\\.[0-9]+");
 const std::regex Lexer::stringRegex("\"[^\"]*\"");
 const std::regex Lexer::additionOperatorRegex("[\\+\\-]");
 const std::regex Lexer::multiplicationOperatorRegex("[\\*/]");
@@ -30,6 +30,9 @@ const std::regex Lexer::unaryOperatorsRegex("[-!]|\\+\\+|--");
 
 
 
+
+
+
 // Funcion encargada de analizar una cadena y usando las expresiones regulares debe guardar los tokens en una lista
 // de tokens. Itera sobre la cadena y compara las expresiones para asi saber a que token pertenece
 int Lexer::analyze(std::string line) {
@@ -39,12 +42,22 @@ int Lexer::analyze(std::string line) {
     std::string delimiters = "=-+";
     std::string whitespaces = " \n\t";
     int line_length = line.length();
+
+    std::unordered_map<const std::regex*, TokenTypes> regexToTokenTypeMap = {
+        {&identifierRegex, TokenTypes::IDENTIFIER},
+        {&integerRegex, TokenTypes::INT_LITERAL},
+        {&floatRegex, TokenTypes::FLOAT_LITERAL}
+    };
+
+    // regexToTokenTypeMap[identifierRegex] = TokenTypes::IDENTIFIER;
+
     for (int i = 0; i < line_length;){
         lexeme = "";
         // Skip whitespace characters
        while (i < line_length && (line[i] == ' ' || line[i] == '\t' || line[i] == '\n')) {
             i++;
         }
+
         // Operators
         if (i < line_length && 
             std::regex_match(std::string(1, line[i]), binaryOperatorsRegex) || 
@@ -75,11 +88,15 @@ int Lexer::analyze(std::string line) {
             // type = TokenTypes::IDENTIFIER;
             i++;
         }
-        if (std::regex_match(lexeme, identifierRegex)){
-            type = TokenTypes::IDENTIFIER;
-        }else if (std::regex_match(lexeme, integerRegex)){
-            type = TokenTypes::INT_LITERAL;
+
+        // Determine the token type based on the lexeme content using the map
+        for (const auto& regexPair : regexToTokenTypeMap) {
+            if (std::regex_match(lexeme, *(regexPair.first))) { // Compare lexeme to the pattern
+                type = regexPair.second;
+                break;
+            }
         }
+        
         tokens.push_back(Token(type, lexeme));
         resultingTokens++;
     }
@@ -107,6 +124,12 @@ void Lexer::printTokens(){
             break; 
         case TokenTypes:: INT_LITERAL:
             typeName = "INT_LITERAL";
+            break;
+        case TokenTypes:: FLOAT_LITERAL:
+            typeName = "FLOAT_LITERAL";
+            break;
+        case TokenTypes:: RETURN:
+            typeName = "RETURN";
             break;
         default:
             break;

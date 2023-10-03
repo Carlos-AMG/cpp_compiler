@@ -1,0 +1,9 @@
+// TODO - remove useless regex like unary/binary operators, we are using one that covers them already
+
+// TODO - add more token detections, this is trivial but must be done
+
+// TODO - fix python-c++ bindings
+
+// TODO - refactor both the Lexer::analyze and Lexer::printTokens
+
+// TODO - remove delimiters and use the regexes instead

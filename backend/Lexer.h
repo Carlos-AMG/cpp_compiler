@@ -18,7 +18,7 @@ struct Lexer{
 
     static const std::regex identifierRegex;
     static const std::regex integerRegex;
-    static const std::regex realRegex;
+    static const std::regex floatRegex;
     static const std::regex stringRegex;
     static const std::regex additionOperatorRegex;
     static const std::regex multiplicationOperatorRegex;
