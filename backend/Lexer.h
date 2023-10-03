@@ -7,11 +7,13 @@
 
 // declaracion de clase Lexer la cual contiene una lista de tokens, la cual la funcion de analizar llenara con los respectivos tokens
 // adicionalmente contiene las expresiones regulares para los diferentes tokens
+
+
 struct Lexer{
     std::vector<Token> tokens;
     int analyze(std::string line);
     void printTokens();
-    std::vector<Token> getTokens();
+    // std::vector<Token> getTokens();
 
 
     static const std::regex identifierRegex;
@@ -31,6 +33,10 @@ struct Lexer{
     static const std::regex rightBraceRegex;
     static const std::regex semicolonRegex;
     static const std::regex reservedWordsRegex;
+
+    // Binary operators defined by this: https://learn.microsoft.com/en-us/cpp/cpp/binary-operators?view=msvc-170
+    static const std::regex binaryOperatorsRegex;
+    static const std::regex unaryOperatorsRegex;
 };
 
 #endif
