@@ -37,49 +37,48 @@ int Lexer::analyze(std::string line) {
     std::string lexeme;
     TokenTypes type;
     std::string delimiters = "=-+";
-    for (int i = 0; i < line.length(); i++){
+    std::string whitespaces = " \n\t";
+    int line_length = line.length();
+    for (int i = 0; i < line_length;){
         lexeme = "";
-        
         // Skip whitespace characters
-       while (i < line.length() && (line[i] == ' ' || line[i] == '\t' || line[i] == '\n')) {
+       while (i < line_length && (line[i] == ' ' || line[i] == '\t' || line[i] == '\n')) {
             i++;
         }
-        
         // Operators
-        // if (i < line.length() && (line[i] == '=' || line[i] == '+')) {
-        //     // lexeme += line[i];
-        //     // i++;
-        //     if (std::regex_match(std::string(1, line[i]), additionOperatorRegex)){
-        //             type = TokenTypes::ADDITION_OP;
-        //             lexeme += line[i];
-        //             i++;
-        //     }else if (line[i] == '='){
-        //         type = TokenTypes::ASSIGNMENT_OP;
-        //         lexeme += line[i];
-        //         i++;
-        //     }
-        // }
-
-        // Operators
-        if (i < line.length() && 
-            std::regex_match(std::string(1, line[i]), binaryOperatorsRegex)){
-                if (line[i] == '+'){
+        if (i < line_length && 
+            std::regex_match(std::string(1, line[i]), binaryOperatorsRegex) || 
+            std::regex_match(std::string(1, line[i]), unaryOperatorsRegex)){
+                lexeme += line[i];
+                // Set the appropriate token type based on the matched operator
+                switch (line[i])
+                {
+                case '+':
                     type = TokenTypes::ADDITION_OP;
-                    lexeme += line[i];
-                    i++;
-                }else if (line[i] == '='){
+                    break;
+                case '-':
+                    type = TokenTypes::SUBTRACTION_OP;               
+                    break;
+                case '=':
                     type = TokenTypes::ASSIGNMENT_OP;
-                    lexeme += line[i];
-                    i++;
+                    break; 
                 }
+                i++;
+                tokens.push_back(Token(type, lexeme));
+                continue;
         }
-
         // Continue building the lexeme until a delimiter is encountered
         // while (i < line.length() && line[i] != ' ' && line[i] != '\t' && line[i] != '\n' && line[i] != '=' && line[i] != '+') {
-        while (i < line.length() && line[i] != ' ' && line[i] != '\t' && line[i] != '\n' && delimiters.find(line[i]) == std::string::npos) {
+        // find wether it is an integer literal, float literal or identifier
+        while (i < line_length && whitespaces.find(line[i]) == std::string::npos && delimiters.find(line[i]) == std::string::npos) {
             lexeme += line[i];
-            type = TokenTypes::IDENTIFIER;
+            // type = TokenTypes::IDENTIFIER;
             i++;
+        }
+        if (std::regex_match(lexeme, identifierRegex)){
+            type = TokenTypes::IDENTIFIER;
+        }else if (std::regex_match(lexeme, integerRegex)){
+            type = TokenTypes::INT_LITERAL;
         }
         tokens.push_back(Token(type, lexeme));
         resultingTokens++;
@@ -103,6 +102,12 @@ void Lexer::printTokens(){
         case TokenTypes::ASSIGNMENT_OP:
             typeName = "ASSIGNMENT_OP";
             break;  
+        case TokenTypes::SUBTRACTION_OP:
+            typeName = "SUBTRACTION_OP";
+            break; 
+        case TokenTypes:: INT_LITERAL:
+            typeName = "INT_LITERAL";
+            break;
         default:
             break;
         }
