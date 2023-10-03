@@ -22,27 +22,24 @@ int main(){
     std::vector<std::string> lexemes = {};
     for (int i = 0; i < line.length(); i++){
         lexeme = "";
-        if (line[i] == ' ' or line[i] == '\n')
-            continue;
+        std::string delimiters = "=-+";
         
-        if (line[i] == '='){
-            lexeme += line[i];
+        // Skip whitespace characters
+       while (i < line.length() && (line[i] == ' ' || line[i] == '\t' || line[i] == '\n')) {
             i++;
-            lexemes.push_back(lexeme);
-            continue;
-        }else if (line[i] == '+'){
-            lexeme += line[i];
-            i++;
-            lexemes.push_back(lexeme);
-            continue;
         }
-        for (int j = i; j < line.length(); j++){
-            if (line[j] == ' ' or line[j] == '=' or line[j] == '+'){
-                i = j;
-                break;
-            }
+        
+        // Operators
+        if (i < line.length() && (line[i] == '=' || line[i] == '+')) {
+            lexeme += line[i];
             i++;
-            lexeme += line[j];
+        }
+
+        // Continue building the lexeme until a delimiter is encountered
+        // while (i < line.length() && line[i] != ' ' && line[i] != '\t' && line[i] != '\n' && line[i] != '=' && line[i] != '+') {
+        while (i < line.length() && line[i] != ' ' && line[i] != '\t' && line[i] != '\n' && delimiters.find(line[i]) == std::string::npos) {
+            lexeme += line[i];
+            i++;
         }
         // std::cout << lexeme << std::endl;
         lexemes.push_back(lexeme);
