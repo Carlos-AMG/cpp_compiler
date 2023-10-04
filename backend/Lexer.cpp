@@ -46,7 +46,8 @@ int Lexer::analyze(std::string line) {
     std::unordered_map<const std::regex*, TokenTypes> regexToTokenTypeMap = {
         {&identifierRegex, TokenTypes::IDENTIFIER},
         {&integerRegex, TokenTypes::INT_LITERAL},
-        {&floatRegex, TokenTypes::FLOAT_LITERAL}
+        {&floatRegex, TokenTypes::FLOAT_LITERAL},
+        {&reservedWordsRegex, TokenTypes::FLOAT_LITERAL}
     };
 
     // regexToTokenTypeMap[identifierRegex] = TokenTypes::IDENTIFIER;
@@ -66,15 +67,31 @@ int Lexer::analyze(std::string line) {
                 // Set the appropriate token type based on the matched operator
                 switch (line[i])
                 {
-                case '+':
-                    type = TokenTypes::ADDITION_OP;
-                    break;
-                case '-':
-                    type = TokenTypes::SUBTRACTION_OP;               
-                    break;
-                case '=':
-                    type = TokenTypes::ASSIGNMENT_OP;
-                    break; 
+                    case '+':
+                        type = TokenTypes::ADDITION_OP;
+                        // std::cout << line[++i] << std::endl;
+                        // std::cout << (line[++i] == '+') << std::endl;
+                        if (line[i+1] == '+'){
+                            lexeme += line[++i];
+                            type = TokenTypes::PLUS_PLUS_OP;
+                        }
+                        break;
+                    case '-':
+                        type = TokenTypes::SUBTRACTION_OP; 
+                        if (line[i++] == '-'){
+                            lexeme += line[i++];
+                            type = TokenTypes::MINUS_MINUS_OP;
+                        }              
+                        break;
+                    case '=':
+                        type = TokenTypes::ASSIGNMENT_OP;
+                        break; 
+                    case '*':
+                        type = TokenTypes::ASSIGNMENT_OP;
+                        break; 
+                    case '/':
+                        type = TokenTypes::ASSIGNMENT_OP;
+                        break; 
                 }
                 i++;
                 tokens.push_back(Token(type, lexeme));
@@ -96,7 +113,7 @@ int Lexer::analyze(std::string line) {
                 break;
             }
         }
-        
+
         tokens.push_back(Token(type, lexeme));
         resultingTokens++;
     }
@@ -122,11 +139,29 @@ void Lexer::printTokens(){
         case TokenTypes::SUBTRACTION_OP:
             typeName = "SUBTRACTION_OP";
             break; 
+        case TokenTypes:: MULTIPLICATION_OP:
+            typeName = "MULTIPLICATION_OP";
+            break;
+        case TokenTypes:: DIVISION_OP:
+            typeName = "DIVISION_OP";
+            break;
+        case TokenTypes:: PLUS_PLUS_OP:
+            typeName = "PLUS_PLUS_OP";
+            break;
+        case TokenTypes:: MINUS_MINUS_OP:
+            typeName = "MINUS_MINUS_OP";
+            break;
         case TokenTypes:: INT_LITERAL:
             typeName = "INT_LITERAL";
             break;
         case TokenTypes:: FLOAT_LITERAL:
             typeName = "FLOAT_LITERAL";
+            break;
+        case TokenTypes::IF:
+            typeName = "IF";
+            break;
+        case TokenTypes:: ELSE:
+            typeName = "ELSE";
             break;
         case TokenTypes:: RETURN:
             typeName = "RETURN";

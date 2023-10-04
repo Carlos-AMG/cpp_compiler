@@ -22,6 +22,8 @@ enum class TokenTypes{
     MORE_THAN_OP,
     MORE_EQUAL_OP,
     ASSIGNMENT_OP,
+    PLUS_PLUS_OP,
+    MINUS_MINUS_OP,
     AND_OP,
     OR_OP,
     IF,
