@@ -2,57 +2,59 @@
 #include <iostream>
 
 
-NumberNode::NumberNode(Token token): token{token}{}
 
-// NumberNode::NumberNode(Token token){
-//     this->token = token;
-// }
+Parser::Parser(const std::vector<Token> & inputTokens): tokens{inputTokens}, curr_idx{0}{}
 
-
-Parser::Parser(const std::vector<Token> & inputTokens): tokens{inputTokens}, tok_idx {1}{}
-
-
-void Parser::parse(std::vector<Token> &tokens){
-    
-    while (!tokens.empty())
-    {
-        Token curr_token = tokens.back();
-        tokens.pop_back();
-        std::cout << curr_token.lexeme << std::endl;
-        if (curr_token.lexeme == "123"){
-            NumberNode number(curr_token);
-        }
+ASTNode* Parser::parse() {
+    ASTNode* result = parseExpr();
+    if (currentToken().type != TokenTypes::EOF_TOKEN) {
+        throw std::runtime_error("Unexpected token after expression");
     }
-    
+    return result;
 }
 
-Token Parser::advance(){
-    tok_idx += 1;
-    if (tok_idx < tokens.size()){
-        this->curr_tok = tokens[tok_idx];
-        return tokens[tok_idx];
+
+Token Parser::currentToken(){
+    if (curr_idx < tokens.size()){
+        return tokens[curr_idx];
     }
+    return {TokenTypes::IDENTIFIER, ""};
 }
 
-NumberNode Parser::factor(){
-    
-    Token token = curr_tok;
-    if (token.type == TokenTypes::INT_LITERAL || token.type == TokenTypes::FLOAT_LITERAL){
+void Parser::advance(){
+    curr_idx++;
+}
+
+ASTNode * Parser::parseExpr(){
+    ASTNode * left = parseTerm();
+    while(currentToken().type == TokenTypes::ADDITION_OP || currentToken().type == TokenTypes::SUBTRACTION_OP){
+        char op = currentToken().lexeme[0];
         advance();
-        return NumberNode(token);
+        ASTNode * right = parseTerm();
+        left = new BinaryOpNode(left, op, right);
     }
-}
-void Parser::term(){
-    NumberNode left = factor();
-    while (curr_tok.type == TokenTypes::MULTIPLICATION_OP or curr_tok.type == TokenTypes::DIVISION_OP){
-        Token op_tok = curr_tok;
-        NumberNode right = factor();
-        BinOpNode left = BinOpNode(left, op_tok, right);
-    }
-    return left
+    return left;
 }
 
-// void Parser::term(Token token){
-//     Token left = token;
-//     while (token)
-// }
+ASTNode * Parser::parseTerm(){
+    ASTNode * left = parseFactor();
+    while (currentToken().type == TokenTypes::MULTIPLICATION_OP || currentToken().type == TokenTypes::DIVISION_OP){
+        char op = currentToken().lexeme[0];
+        advance();
+        ASTNode * right = parseFactor();
+        left = new BinaryOpNode(left, op, right);
+    }
+    return left;
+}
+
+ASTNode* Parser::parseFactor() {
+    Token token = currentToken();
+    advance();
+    if (token.type == TokenTypes::INT_LITERAL) {
+        return new NumberNode(std::stod(token.lexeme));
+    } else if (token.type == TokenTypes::FLOAT_LITERAL) {
+        return new NumberNode(std::stod(token.lexeme));
+    } else {
+        throw std::runtime_error("Expected INT or FLOAT");
+    }
+}

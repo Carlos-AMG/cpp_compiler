@@ -35,7 +35,8 @@ enum class TokenTypes{
     FLOAT,
     CHAR,
     VOID, 
-    STRING
+    STRING,
+    EOF_TOKEN
 };
 
 struct Token {

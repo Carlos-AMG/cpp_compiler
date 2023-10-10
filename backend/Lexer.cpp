@@ -87,10 +87,10 @@ int Lexer::analyze(std::string line) {
                         type = TokenTypes::ASSIGNMENT_OP;
                         break; 
                     case '*':
-                        type = TokenTypes::ASSIGNMENT_OP;
+                        type = TokenTypes::MULTIPLICATION_OP;
                         break; 
                     case '/':
-                        type = TokenTypes::ASSIGNMENT_OP;
+                        type = TokenTypes::DIVISION_OP;
                         break; 
                 }
                 i++;
@@ -117,7 +117,7 @@ int Lexer::analyze(std::string line) {
         tokens.push_back(Token(type, lexeme));
         resultingTokens++;
     }
-    
+    tokens.push_back(Token(TokenTypes::EOF_TOKEN, ""));
     return resultingTokens;
 }
 
@@ -139,32 +139,35 @@ void Lexer::printTokens(){
         case TokenTypes::SUBTRACTION_OP:
             typeName = "SUBTRACTION_OP";
             break; 
-        case TokenTypes:: MULTIPLICATION_OP:
+        case TokenTypes::MULTIPLICATION_OP:
             typeName = "MULTIPLICATION_OP";
             break;
-        case TokenTypes:: DIVISION_OP:
+        case TokenTypes::DIVISION_OP:
             typeName = "DIVISION_OP";
             break;
-        case TokenTypes:: PLUS_PLUS_OP:
+        case TokenTypes::PLUS_PLUS_OP:
             typeName = "PLUS_PLUS_OP";
             break;
         case TokenTypes:: MINUS_MINUS_OP:
             typeName = "MINUS_MINUS_OP";
             break;
-        case TokenTypes:: INT_LITERAL:
+        case TokenTypes::INT_LITERAL:
             typeName = "INT_LITERAL";
             break;
-        case TokenTypes:: FLOAT_LITERAL:
+        case TokenTypes::FLOAT_LITERAL:
             typeName = "FLOAT_LITERAL";
             break;
         case TokenTypes::IF:
             typeName = "IF";
             break;
-        case TokenTypes:: ELSE:
+        case TokenTypes::ELSE:
             typeName = "ELSE";
             break;
-        case TokenTypes:: RETURN:
+        case TokenTypes::RETURN:
             typeName = "RETURN";
+            break;
+        case TokenTypes::EOF_TOKEN:
+            typeName = "EOF";
             break;
         default:
             break;

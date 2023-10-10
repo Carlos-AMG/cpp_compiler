@@ -7,10 +7,52 @@ enum test{
     STOP
 };
 
+// void PrintAST(ASTNode* node, int indent = 0) {
+//     if (node == nullptr) {
+//         return;
+//     }
+//     for (int i = 0; i < indent; ++i) {
+//         std::cout << "  ";
+//     }
+//     if (dynamic_cast<BinaryOpNode*>(node)) {
+//         BinaryOpNode* binOpNode = dynamic_cast<BinaryOpNode*>(node);
+//         std::cout << "BinaryOpNode " << binOpNode->op << std::endl;
+//         PrintAST(binOpNode->left, indent + 1);
+//         PrintAST(binOpNode->right, indent + 1);
+//     } else if (dynamic_cast<NumberNode*>(node)) {
+//         NumberNode* numNode = dynamic_cast<NumberNode*>(node);
+//         std::cout << "NumberNode " << numNode->value << std::endl;
+//     }
+// }
+
+void PrintAST(ASTNode* node, int indent = 0) {
+    if (node == nullptr) {
+        return;
+    }
+
+    for (int i = 0; i < indent; ++i) {
+        std::cout << "  ";
+    }
+
+    if (dynamic_cast<BinaryOpNode*>(node)) {
+        BinaryOpNode* binOpNode = dynamic_cast<BinaryOpNode*>(node);
+        std::cout << "(";
+        PrintAST(binOpNode->left);
+        std::cout << " " << binOpNode->op << " ";
+        PrintAST(binOpNode->right);
+        std::cout << ")";
+    } else if (dynamic_cast<NumberNode*>(node)) {
+        NumberNode* numNode = dynamic_cast<NumberNode*>(node);
+        std::cout << "INT:" << numNode->value << "";
+    }
+}
+
+
+
 // Funcion que simplemente prueba la funcionalidad del Lexer (sin necesidad de bindings/gui)
 int main(){
     Lexer lex1;
-    Parser pars1;
+    // Parser pars1(lex1.tokens);
     std::string line;
     // std::string line = "x = a + b + c";
     std::cout << "Write some text: ";
@@ -18,7 +60,14 @@ int main(){
     lex1.analyze(line);
     std::cout << "Tokens: " << std::endl;
     lex1.printTokens();
-    pars1.parse(lex1.tokens);
 
+    Parser pars1(lex1.tokens);
+    try {
+        ASTNode* ast = pars1.parse();
+        std::cout << "Abstract Syntax Tree (AST):" << std::endl;
+        PrintAST(ast);
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
     return 0;
 }
