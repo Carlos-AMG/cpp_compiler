@@ -42,7 +42,9 @@ struct Token {
     TokenTypes type;
     std::string lexeme;
     // Token * getToken();
+    Token();
     Token(TokenTypes type, std::string lexeme);
+    Token(const Token& other);
 };
 
 #endif

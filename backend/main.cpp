@@ -1,4 +1,5 @@
 #include "Lexer.h"
+#include "Parser.h"
 #include <iostream>
 
 enum test{
@@ -9,6 +10,7 @@ enum test{
 // Funcion que simplemente prueba la funcionalidad del Lexer (sin necesidad de bindings/gui)
 int main(){
     Lexer lex1;
+    Parser pars1;
     std::string line;
     // std::string line = "x = a + b + c";
     std::cout << "Write some text: ";
@@ -16,5 +18,7 @@ int main(){
     lex1.analyze(line);
     std::cout << "Tokens: " << std::endl;
     lex1.printTokens();
+    pars1.parse(lex1.tokens);
+
     return 0;
 }

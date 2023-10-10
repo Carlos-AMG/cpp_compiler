@@ -4,7 +4,8 @@ CXXFLAGS := -Wall -Wextra -std=c++11
 INC := -I.
 
 # Source files
-SRCS := main.cpp Lexer.cpp Token.cpp ./utils/utils.cpp
+SRCS := main.cpp Lexer.cpp Token.cpp ./utils/utils.cpp Parser.cpp
+# Add Parser.cpp to the list of source files
 
 # Object files
 OBJS := $(SRCS:.cpp=.o)
