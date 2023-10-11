@@ -24,7 +24,7 @@ const std::regex Lexer::semicolonRegex(";");
 const std::regex Lexer::reservedWordsRegex("if|while|return|else|int|float");
 
 
-const std::regex Lexer::binaryOperatorsRegex("[,!=%&*+-\\-><<==>>=^|]+");
+const std::regex Lexer::binaryOperatorsRegex("[,!=%&*+-\\/-><<==>>=^|]+");
 const std::regex Lexer::unaryOperatorsRegex("[-!]|\\+\\+|--");
 
 
@@ -49,8 +49,6 @@ int Lexer::analyze(std::string line) {
         {&floatRegex, TokenTypes::FLOAT_LITERAL},
         {&reservedWordsRegex, TokenTypes::FLOAT_LITERAL}
     };
-
-    // regexToTokenTypeMap[identifierRegex] = TokenTypes::IDENTIFIER;
 
     for (int i = 0; i < line_length;){
         lexeme = "";
@@ -98,24 +96,22 @@ int Lexer::analyze(std::string line) {
                 continue;
         }
         // Continue building the lexeme until a delimiter is encountered
-        // while (i < line.length() && line[i] != ' ' && line[i] != '\t' && line[i] != '\n' && line[i] != '=' && line[i] != '+') {
-        // find wether it is an integer literal, float literal or identifier
         while (i < line_length && whitespaces.find(line[i]) == std::string::npos && delimiters.find(line[i]) == std::string::npos) {
             lexeme += line[i];
-            // type = TokenTypes::IDENTIFIER;
             i++;
         }
-
         // Determine the token type based on the lexeme content using the map
         for (const auto& regexPair : regexToTokenTypeMap) {
-            if (std::regex_match(lexeme, *(regexPair.first))) { // Compare lexeme to the pattern
+            if (!lexeme.empty() && std::regex_match(lexeme, *(regexPair.first))) { // Compare lexeme to the pattern
                 type = regexPair.second;
                 break;
             }
         }
+        if (!lexeme.empty()){
+            tokens.push_back(Token(type, lexeme));
+            resultingTokens++;
 
-        tokens.push_back(Token(type, lexeme));
-        resultingTokens++;
+        }
     }
     tokens.push_back(Token(TokenTypes::EOF_TOKEN, ""));
     return resultingTokens;

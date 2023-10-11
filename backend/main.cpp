@@ -7,24 +7,6 @@ enum test{
     STOP
 };
 
-// void PrintAST(ASTNode* node, int indent = 0) {
-//     if (node == nullptr) {
-//         return;
-//     }
-//     for (int i = 0; i < indent; ++i) {
-//         std::cout << "  ";
-//     }
-//     if (dynamic_cast<BinaryOpNode*>(node)) {
-//         BinaryOpNode* binOpNode = dynamic_cast<BinaryOpNode*>(node);
-//         std::cout << "BinaryOpNode " << binOpNode->op << std::endl;
-//         PrintAST(binOpNode->left, indent + 1);
-//         PrintAST(binOpNode->right, indent + 1);
-//     } else if (dynamic_cast<NumberNode*>(node)) {
-//         NumberNode* numNode = dynamic_cast<NumberNode*>(node);
-//         std::cout << "NumberNode " << numNode->value << std::endl;
-//     }
-// }
-
 void PrintAST(ASTNode* node, int indent = 0) {
     if (node == nullptr) {
         return;
@@ -43,11 +25,10 @@ void PrintAST(ASTNode* node, int indent = 0) {
         std::cout << ")";
     } else if (dynamic_cast<NumberNode*>(node)) {
         NumberNode* numNode = dynamic_cast<NumberNode*>(node);
+        std::string tokTypeStr = "";
         std::cout << "INT:" << numNode->value << "";
     }
 }
-
-
 
 // Funcion que simplemente prueba la funcionalidad del Lexer (sin necesidad de bindings/gui)
 int main(){
