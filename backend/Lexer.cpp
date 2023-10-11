@@ -67,8 +67,6 @@ int Lexer::analyze(std::string line) {
                 {
                     case '+':
                         type = TokenTypes::ADDITION_OP;
-                        // std::cout << line[++i] << std::endl;
-                        // std::cout << (line[++i] == '+') << std::endl;
                         if (line[i+1] == '+'){
                             lexeme += line[++i];
                             type = TokenTypes::PLUS_PLUS_OP;
@@ -76,7 +74,7 @@ int Lexer::analyze(std::string line) {
                         break;
                     case '-':
                         type = TokenTypes::SUBTRACTION_OP; 
-                        if (line[i++] == '-'){
+                        if (line[i+1] == '-'){
                             lexeme += line[i++];
                             type = TokenTypes::MINUS_MINUS_OP;
                         }              

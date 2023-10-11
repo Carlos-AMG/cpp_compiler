@@ -10,3 +10,4 @@
 
 
 // TODO - Create function that maps enum types into string to avoid having lots of if/switches and even mapping
+https://stackoverflow.com/questions/5093460/how-to-convert-an-enum-type-variable-to-a-string
