@@ -7,3 +7,6 @@
 // TODO - refactor both the Lexer::analyze and Lexer::printTokens
 
 // TODO - remove delimiters and use the regexes instead
+
+
+// TODO - Create function that maps enum types into string to avoid having lots of if/switches and even mapping

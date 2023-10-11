@@ -2,11 +2,6 @@
 #include "Parser.h"
 #include <iostream>
 
-enum test{
-    GO,
-    STOP
-};
-
 void PrintAST(ASTNode* node, int indent = 0) {
     if (node == nullptr) {
         return;
@@ -20,13 +15,18 @@ void PrintAST(ASTNode* node, int indent = 0) {
         BinaryOpNode* binOpNode = dynamic_cast<BinaryOpNode*>(node);
         std::cout << "(";
         PrintAST(binOpNode->left);
-        std::cout << " " << binOpNode->op << " ";
+        // std::cout << " " << binOpNode->op << " ";
+        std::cout << " " << binOpNode->op_tok.lexeme << " ";
         PrintAST(binOpNode->right);
         std::cout << ")";
     } else if (dynamic_cast<NumberNode*>(node)) {
         NumberNode* numNode = dynamic_cast<NumberNode*>(node);
         std::string tokTypeStr = "";
-        std::cout << "INT:" << numNode->value << "";
+        if (numNode->tok.type == TokenTypes::INT_LITERAL)
+            tokTypeStr = "INT_LITERAL";
+        else if (numNode->tok.type == TokenTypes::FLOAT_LITERAL)
+            tokTypeStr = "FLOAT_LITERAL";
+        std::cout << tokTypeStr << ":" << numNode->tok.lexeme << "";
     }
 }
 

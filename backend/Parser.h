@@ -15,17 +15,20 @@ struct ASTNode{
 
 struct BinaryOpNode: public ASTNode{
     ASTNode * left;
-    char op;
+    // char op;
+    Token op_tok;
     ASTNode * right;
+    BinaryOpNode(ASTNode * left, Token rhs_op_tok, ASTNode * right): left{left}, op_tok{rhs_op_tok}, right{right}{}
 
-    BinaryOpNode(ASTNode * left, char op, ASTNode* right):
-        left(left), op(op), right(right){}
-
+    // BinaryOpNode(ASTNode * left, char op, ASTNode* right):
+    //     left(left), op(op), right(right){}
 };
 
 struct NumberNode : public ASTNode {
-    int value;
-    NumberNode(int value) : value(value) {}
+    // int value;
+    Token tok;
+    // NumberNode(int value) : value(value) {}
+    NumberNode(Token rhs_tok) : tok(rhs_tok) {}
 };
 
 struct Parser{
