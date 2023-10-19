@@ -1,3 +1,14 @@
-expr := term ((PLUS|MINUS) term)*
-term := factor ((MUL|DIV) factor)*
-factor := INT|FLOAT
+program := statement*
+statement := assignment | if_statement | return_statement | expresion
+if_statement := RESERVED_IF LEFT_PAREN expression RIGHT_PAREN LEFT_BRACKET statement RIGHT_BRACKET
+return_statement := RESERVED_RETURN expression SEMICOLON
+assignment := identifier ASSIGNMENT_OP expression SEMICOLON
+expression := logical_or
+logical_or := logical_and (OR_OP logical_and)*
+logical_and := equality (AND_OP equality)*
+equality := relational ((EQUIALITY_OP | INEQ_OP) relational)*
+relational := additive ((GRATER_OP | LESSER_OP ) additive)*
+additive := multiplicative ((ADD_OP | SUB_OP) multiplicative)*
+multiplicative := unary ((MULT_OP | DIV_OP) unary)
+unary := (ADD_OP | SUB_OP ) unary | primary
+primary := identifier | integer | Real | LEFT_PAREN expression RIGHT_PAREN

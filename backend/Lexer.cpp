@@ -81,13 +81,28 @@ int Lexer::analyze(std::string line) {
                         break;
                     case '=':
                         type = TokenTypes::ASSIGNMENT_OP;
+                        if (line[i+1] == '='){
+                            lexeme += line[i++];
+                            type = TokenTypes::EQUALITY_OP;
+                        }     
                         break; 
                     case '*':
                         type = TokenTypes::MULTIPLICATION_OP;
                         break; 
-                    case '/':
-                        type = TokenTypes::DIVISION_OP;
-                        break; 
+                    case '>':
+                        type = TokenTypes::MORE_THAN_OP;
+                        break;
+                    case '<':
+                        type = TokenTypes::LESS_THAN_OP;
+                        break;
+                    case '!':
+                        type = TokenTypes::NOT_OP;
+                        if (line[i+1] == '='){
+                            lexeme += line[++i];
+                            type = TokenTypes::INEQUALITY_OP;
+                        } 
+                        break;
+                      
                 }
                 i++;
                 tokens.push_back(Token(type, lexeme));
@@ -123,6 +138,15 @@ void Lexer::printTokens(){
         {
         case TokenTypes::IDENTIFIER:
             typeName = "IDENTIFIER";
+            break;
+        case TokenTypes::INEQUALITY_OP:
+            typeName = "INEQUALITY_OP";
+            break;
+        case TokenTypes::MORE_THAN_OP:
+            typeName = "MORE_THAN_OP";
+            break;
+        case TokenTypes::LESS_THAN_OP:
+            typeName = "LESS_THAN_OP";
             break;
         case TokenTypes::ADDITION_OP:
             typeName = "ADDITION_OP";
