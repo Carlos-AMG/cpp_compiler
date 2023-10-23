@@ -1,3 +1,4 @@
+// #include "Parser.h"
 #include "Parser.h"
 #include <iostream>
 
@@ -20,6 +21,7 @@ ASTNode* Parser::parseProgram() {
     std::vector<ASTNode*> programStatements;
 
     while (currentToken().type != TokenTypes::EOF_TOKEN) {
+        std::cout << "lexeme: " << currentToken().lexeme << std::endl;
         programStatements.push_back(parseStatement());
     }
 
@@ -32,11 +34,8 @@ ASTNode* Parser::parseStatement() {
         return parseIfStatement();
     } else if (currentToken().type == TokenTypes::RETURN) {
         return parseReturnStatement();
-    } else if (currentToken().type == TokenTypes::IDENTIFIER) {
-        // Verificar si es una asignación
-        if (currentToken().type == TokenTypes::ASSIGNMENT_OP) {
-            return parseAssignment();
-        }
+    } else if (currentToken().type == TokenTypes::ASSIGNMENT_OP) {
+        return parseAssignment();
     }
 
     // Si no coincide con ninguno de los tipos de declaración anteriores, asumir que es una expresión
@@ -93,8 +92,9 @@ ASTNode* Parser::parseBlock() {
 
 ASTNode* Parser::parseAssignment() {
     Token identifierToken = currentToken();
-    advance();  // Avanzar al identificador
+    // advance();  // Avanzar al identificador
     if (currentToken().type == TokenTypes::ASSIGNMENT_OP) {
+        std::cout << "it is an assignment" << std::endl;
         advance();  // Avanzar al operador de asignación
         ASTNode* expression = parseExpression();
         return new AssignmentNode(identifierToken, expression);
@@ -197,10 +197,16 @@ ASTNode* Parser::parseUnary() {
 }
 
 ASTNode* Parser::parsePrimary() {
+    Token currTok = currentToken();
+    std::cout << "primary lexeme before: " << currTok.lexeme << std::endl;
     if (currentToken().type == TokenTypes::IDENTIFIER) {
-        return new IdentifierNode(currentToken());
+        advance();
+        return new IdentifierNode(currTok);
+        // return new IdentifierNode(currentToken());
     } else if (currentToken().type == TokenTypes::INT_LITERAL || currentToken().type == TokenTypes::FLOAT_LITERAL) {
-        return new NumberNode(currentToken());
+        advance();
+        return new NumberNode(currTok);
+        // return new NumberNode(currentToken());
     } else if (currentToken().type == TokenTypes::LEFT_PAREN) {
         advance();  // Avanza el token LEFT_PAREN
         ASTNode* expression = parseExpression();
