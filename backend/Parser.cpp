@@ -21,7 +21,6 @@ ASTNode* Parser::parseProgram() {
     std::vector<ASTNode*> programStatements;
 
     while (currentToken().type != TokenTypes::EOF_TOKEN) {
-        std::cout << "lexeme: " << currentToken().lexeme << std::endl;
         programStatements.push_back(parseStatement());
     }
 
@@ -94,7 +93,6 @@ ASTNode* Parser::parseAssignment() {
     Token identifierToken = currentToken();
     // advance();  // Avanzar al identificador
     if (currentToken().type == TokenTypes::ASSIGNMENT_OP) {
-        std::cout << "it is an assignment" << std::endl;
         advance();  // Avanzar al operador de asignación
         ASTNode* expression = parseExpression();
         return new AssignmentNode(identifierToken, expression);
@@ -198,7 +196,6 @@ ASTNode* Parser::parseUnary() {
 
 ASTNode* Parser::parsePrimary() {
     Token currTok = currentToken();
-    std::cout << "primary lexeme before: " << currTok.lexeme << std::endl;
     if (currentToken().type == TokenTypes::IDENTIFIER) {
         advance();
         return new IdentifierNode(currTok);

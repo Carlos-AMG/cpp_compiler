@@ -27,12 +27,6 @@ const std::regex Lexer::reservedWordsRegex("if|while|return|else|int|float");
 const std::regex Lexer::binaryOperatorsRegex("[,!=%&*+-\\/-><<==>>=^|]+");
 const std::regex Lexer::unaryOperatorsRegex("[-!]|\\+\\+|--");
 
-
-
-
-
-
-
 // Funcion encargada de analizar una cadena y usando las expresiones regulares debe guardar los tokens en una lista
 // de tokens. Itera sobre la cadena y compara las expresiones para asi saber a que token pertenece
 int Lexer::analyze(std::string line) {
