@@ -1,8 +1,15 @@
-#include "Lexer.h"
-#include "Parser.h"
-#include "utils/utils.h"
+#include "mainwindow.h"
+
+#include "../../backend/Lexer.h"
+#include "../../backend/Parser.h"
+#include "../../backend/utils/utils.h"
 #include <string>
 #include <iostream>
+#include <QCoreApplication>
+#include <QDir>
+
+#include <QApplication>
+
 
 void PrintAST(ASTNode* node, int indent = 0) {
     if (node == nullptr) {
@@ -62,37 +69,22 @@ void PrintAST(ASTNode* node, int indent = 0) {
     }
 }
 
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
 
-// Funcion que simplemente prueba la funcionalidad del Lexer (sin necesidad de bindings/gui)
-int main(){
-    std::string text;
-    // try {
-    //     text = readFile("./text.txt");
-    // } catch (const std::exception & e) {
-    //     std::cerr << "Error: " << e.what() << std::endl;
-    // }
-
-    std::vector<std::string> lines;
-    try {
-        text = readLinesFromFile("./text.txt")
-    } catch (const std::exception & e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-    }
-
-    std::cout << "lexer output: " << text << std::endl;
-
-    Lexer lex1;
-    lex1.analyze(text);
-    std::cout << "Tokens: " << std::endl;
-    lex1.printTokens();
-
-    Parser pars1(lex1.tokens);
-    try {
+//    Parser pars1(lex1.tokens);
+    /*ry {
         ASTNode* ast = pars1.parseProgram();
         std::cout << "Abstract Syntax Tree (AST):" << std::endl;
         PrintAST(ast);
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
-    }
-    return 0;
+    }*/
+
+
+
+    return a.exec();
 }

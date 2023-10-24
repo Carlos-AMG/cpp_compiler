@@ -20,6 +20,7 @@ void Parser::advance(){
 ASTNode* Parser::parseProgram() {
     std::vector<ASTNode*> programStatements;
 
+
     while (currentToken().type != TokenTypes::EOF_TOKEN) {
         programStatements.push_back(parseStatement());
     }
@@ -46,8 +47,7 @@ ASTNode* Parser::parseIfStatement() {
 
     if (currentToken().type == TokenTypes::LEFT_PAREN) {
         advance();  // Avanzar al paréntesis izquierdo
-        ASTNode* condition = parseExpression();
-        
+        ASTNode* condition = parseExpression();        
         if (currentToken().type == TokenTypes::RIGHT_PAREN) {
             advance();  // Avanzar al paréntesis derecho
 

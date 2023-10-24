@@ -33,6 +33,11 @@ struct Lexer{
     static const std::regex rightBraceRegex;
     static const std::regex semicolonRegex;
     static const std::regex reservedWordsRegex;
+    static const std::regex ifRegex;
+    static const std::regex elseRegex;
+    static const std::regex whileRegex;
+    static const std::regex reservedIntRegex;
+    static const std::regex reservedFloatRegex;
 
     // Binary operators defined by this: https://learn.microsoft.com/en-us/cpp/cpp/binary-operators?view=msvc-170
     static const std::regex binaryOperatorsRegex;
