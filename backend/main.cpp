@@ -65,34 +65,44 @@ void PrintAST(ASTNode* node, int indent = 0) {
 
 // Funcion que simplemente prueba la funcionalidad del Lexer (sin necesidad de bindings/gui)
 int main(){
-    std::string text;
-    // try {
-    //     text = readFile("./text.txt");
-    // } catch (const std::exception & e) {
-    //     std::cerr << "Error: " << e.what() << std::endl;
-    // }
+    Lexer lex1;
 
-    std::vector<std::string> lines;
+    // std::vector<std::string> lines;
+    std::string text;
     try {
-        text = readLinesFromFile("./text.txt")
+        text = readFile("./text.txt");
     } catch (const std::exception & e) {
         std::cerr << "Error: " << e.what() << std::endl;
     }
 
-    std::cout << "lexer output: " << text << std::endl;
+    Lexer lex;
+    lex.analyze(text);
+    Parser pars(lex.tokens);
+    lex.printTokens();
 
-    Lexer lex1;
-    lex1.analyze(text);
-    std::cout << "Tokens: " << std::endl;
-    lex1.printTokens();
-
-    Parser pars1(lex1.tokens);
     try {
-        ASTNode* ast = pars1.parseProgram();
-        std::cout << "Abstract Syntax Tree (AST):" << std::endl;
+        ASTNode* ast = pars.parseProgram();
         PrintAST(ast);
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
     }
+    
+    // size_t line = 0;
+    // for (auto line: lines){
+    //     Lexer lex1;
+    //     lex1.analyze(line);
+    //     Parser pars1(lex1.tokens);
+    //     std::cout << "lexer input: " << line << std::endl;
+    //     std::cout << "Tokens: " << std::endl;
+    //     lex1.printTokens();
+    //     try {
+    //         ASTNode* ast = pars1.parseProgram();
+    //         std::cout << "Abstract Syntax Tree (AST):" << std::endl;
+    //         PrintAST(ast);
+    //     } catch (const std::exception& e) {
+    //         std::cerr << "Error on line: " << line << ":"<< e.what() << std::endl;
+    //     }
+    //     line += 1;
+    // }
     return 0;
 }

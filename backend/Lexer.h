@@ -38,6 +38,8 @@ struct Lexer{
     static const std::regex whileRegex;
     static const std::regex reservedIntRegex;
     static const std::regex reservedFloatRegex;
+    static const std::regex reservedReturn;
+
 
     // Binary operators defined by this: https://learn.microsoft.com/en-us/cpp/cpp/binary-operators?view=msvc-170
     static const std::regex binaryOperatorsRegex;

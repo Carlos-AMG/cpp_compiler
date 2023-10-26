@@ -27,9 +27,7 @@ const std::regex Lexer::elseRegex("else");
 const std::regex Lexer::whileRegex("while");
 const std::regex Lexer::reservedIntRegex("int");
 const std::regex Lexer::reservedFloatRegex("float");
-
-
-
+const std::regex Lexer::reservedReturn("return");
 
 const std::regex Lexer::binaryOperatorsRegex("[,!=%&*+-\\/-><<==>>=^|]+");
 const std::regex Lexer::unaryOperatorsRegex("[-!]|\\+\\+|--");
@@ -37,31 +35,36 @@ const std::regex Lexer::unaryOperatorsRegex("[-!]|\\+\\+|--");
 // Funcion encargada de analizar una cadena y usando las expresiones regulares debe guardar los tokens en una lista
 // de tokens. Itera sobre la cadena y compara las expresiones para asi saber a que token pertenece
 int Lexer::analyze(std::string line) {
+    size_t lineNumber = 1;
     int resultingTokens = 0;
     std::string lexeme;
     TokenTypes type;
     std::string delimiters = "=-+/";
+    std::string delimiters2 = "{";
     std::string whitespaces = " \n\t";
     int line_length = line.length();
 
     std::unordered_map<const std::regex*, TokenTypes> regexToTokenTypeMap = {
-        {&identifierRegex, TokenTypes::IDENTIFIER},
         {&integerRegex, TokenTypes::INT_LITERAL},
         {&floatRegex, TokenTypes::FLOAT_LITERAL},
         {&leftParenthesisRegex, TokenTypes::LEFT_PAREN},
         {&rightParenthesisRegex, TokenTypes::RIGHT_PAREN},
+        {&reservedReturn, TokenTypes::RETURN},        
         {&leftBraceRegex, TokenTypes::LEFT_BRACKET},
         {&rightBraceRegex, TokenTypes::RIGHT_BRACKET},
-        {&ifRegex, TokenTypes::IF}
+        {&ifRegex, TokenTypes::IF},
+        {&identifierRegex, TokenTypes::IDENTIFIER}
     };
 
     for (int i = 0; i < line_length;){
         lexeme = "";
         // Skip whitespace characters
+        if (line[i] == '\n'){
+            lineNumber += 1;
+        }
        while (i < line_length && (line[i] == ' ' || line[i] == '\t' || line[i] == '\n')) {
             i++;
         }
-
         // Operators
         if (i < line_length && 
             std::regex_match(std::string(1, line[i]), binaryOperatorsRegex) || 
@@ -113,16 +116,16 @@ int Lexer::analyze(std::string line) {
                       
                 }
                 i++;
-                tokens.push_back(Token(type, lexeme));
+                tokens.push_back(Token(type, lexeme, lineNumber));
                 continue;
         }
         if (i < line_length && 
             std::regex_match(std::string(1, line[i]), leftBraceRegex) ||
             std::regex_match(std::string(1, line[i]), leftBraceRegex) ||
             std::regex_match(std::string(1, line[i]), leftParenthesisRegex) || 
-            std::regex_match(std::string(1, line[i]), rightParenthesisRegex) ){
+            std::regex_match(std::string(1, line[i]), rightParenthesisRegex) ||
+            line[i] == ';'){
             lexeme += line[i];
-
             switch (line[i])
                 {
                     case '{':
@@ -137,13 +140,16 @@ int Lexer::analyze(std::string line) {
                     case ')':
                         type = TokenTypes::RIGHT_PAREN;        
                         break;  
+                    case ';':
+                        type = TokenTypes::SEMICOLON;        
+                        break;  
                 }
                 i++;
-                tokens.push_back(Token(type, lexeme));
+                tokens.push_back(Token(type, lexeme, lineNumber));
                 continue;
         }
         // Continue building the lexeme until a delimiter is encountered
-        while (i < line_length && whitespaces.find(line[i]) == std::string::npos && delimiters.find(line[i]) == std::string::npos ) {
+        while (i < line_length && whitespaces.find(line[i]) == std::string::npos && delimiters.find(line[i]) == std::string::npos) {
             lexeme += line[i];
             i++;
         }
@@ -151,15 +157,18 @@ int Lexer::analyze(std::string line) {
         for (const auto& regexPair : regexToTokenTypeMap) {
             if (!lexeme.empty() && std::regex_match(lexeme, *(regexPair.first))) { // Compare lexeme to the pattern
                 type = regexPair.second;
+                if (std::regex_match(lexeme, reservedReturn)){
+                    type = TokenTypes::RETURN;
+                }
                 break;
             }
         }
         if (!lexeme.empty()){
-            tokens.push_back(Token(type, lexeme));
+            tokens.push_back(Token(type, lexeme, lineNumber));
             resultingTokens++;
         }
     }
-    tokens.push_back(Token(TokenTypes::EOF_TOKEN, ""));
+    tokens.push_back(Token(TokenTypes::EOF_TOKEN, "", lineNumber));
     return resultingTokens;
 }
 
@@ -168,7 +177,7 @@ void Lexer::printTokens(){
     std::string typeName;
     for (auto token : this->tokens){
         typeName = tokenTypeToString(token.type);
-        std::cout << "Type: " << typeName << ", Lexeme: " <<  token.lexeme << std::endl;
+        std::cout << "Type: " << typeName << ", Lexeme: " <<  token.lexeme << ", line: " << token.lineNumber << std::endl;
     }
 }
 

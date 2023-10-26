@@ -81,13 +81,6 @@ struct IfStatementNode : public ASTNode {
 };
 
 
-
-
-
-
-
-
-
 struct Parser{
     std::vector<Token> tokens;
     size_t curr_idx;

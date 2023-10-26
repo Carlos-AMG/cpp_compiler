@@ -69,6 +69,8 @@ std::string tokenTypeToString(TokenTypes type) {
             return "ELSE";
         case TokenTypes::RETURN:
             return "RETURN";
+        case TokenTypes::SEMICOLON:
+            return "SEMICOLON";
         case TokenTypes::LEFT_PAREN:
             return "LEFT_PAREN";
         case TokenTypes::RIGHT_PAREN:

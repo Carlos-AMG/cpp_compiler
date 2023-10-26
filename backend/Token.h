@@ -43,10 +43,12 @@ enum class TokenTypes{
 };
 
 struct Token {
+    long lineNumber;
     TokenTypes type;
     std::string lexeme;
     // Token * getToken();
     Token();
+    Token(TokenTypes type, std::string lexeme, size_t lineNumber);
     Token(TokenTypes type, std::string lexeme);
     Token(const Token& other);
 };

@@ -1,5 +1,6 @@
 // #include "Parser.h"
 #include "Parser.h"
+#include "utils/utils.h"
 #include <iostream>
 
 
@@ -61,7 +62,7 @@ ASTNode* Parser::parseIfStatement() {
 
             return new IfStatementNode(condition, if_body, else_body);
         } else {
-            throw std::runtime_error("Expected a closing parenthesis");
+            throw std::runtime_error("Expected a closing parenthesis on line number: " + std::to_string(currentToken().lineNumber) );
         }
     } else {
         throw std::runtime_error("Expected an opening parenthesis after 'if'");
@@ -211,17 +212,17 @@ ASTNode* Parser::parsePrimary() {
             advance();  // Avanza el token RIGHT_PAREN
             return expression;
         } else {
-            throw std::runtime_error("Expected a closing parenthesis");
+            throw std::runtime_error("Expected a closing parenthesis on line: " + std::to_string(currTok.lineNumber));
         }
     } else {
-        throw std::runtime_error("Unexpected token in primary expression");
+        throw std::runtime_error("Unexpected token: " + tokenTypeToString(currTok.type) + "  in primary expression");
     }
 }
 
 ASTNode* Parser::parseReturnStatement() {
+    std::cout << "reyes no tiene manjaro" << std::endl;
     advance();  // Avanzar al token RESERVED_RETURN
     ASTNode* expression = parseExpression();
-
     if (currentToken().type == TokenTypes::SEMICOLON) {
         advance();  // Avanzar al punto y coma
         return new ReturnStatementNode(expression);
