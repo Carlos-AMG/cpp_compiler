@@ -42,6 +42,11 @@ struct IdentifierNode : public ASTNode {
     Token identifier;
     IdentifierNode(const Token& identifier) : identifier(identifier) {}
 };
+
+struct StringNode : public ASTNode {
+    Token string;
+    StringNode(const Token& string) : string(string) {}
+};
 struct ReturnStatementNode : public ASTNode {
     ASTNode* expression;
     ReturnStatementNode(ASTNode* expression) : expression(expression) {}

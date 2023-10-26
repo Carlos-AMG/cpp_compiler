@@ -205,7 +205,11 @@ ASTNode* Parser::parsePrimary() {
         advance();
         return new NumberNode(currTok);
         // return new NumberNode(currentToken());
-    } else if (currentToken().type == TokenTypes::LEFT_PAREN) {
+    } else if (currentToken().type == TokenTypes::STRING_LITERAL){
+        advance();
+        return new StringNode(currTok);
+    }
+    else if (currentToken().type == TokenTypes::LEFT_PAREN) {
         advance();  // Avanza el token LEFT_PAREN
         ASTNode* expression = parseExpression();
         if (currentToken().type == TokenTypes::RIGHT_PAREN) {

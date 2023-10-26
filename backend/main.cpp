@@ -38,6 +38,9 @@ void PrintAST(ASTNode* node, int indent = 0) {
     } else if (dynamic_cast<IdentifierNode*>(node)) {
         IdentifierNode* idNode = dynamic_cast<IdentifierNode*>(node);
         std::cout << "Identifier: " << idNode->identifier.lexeme << std::endl;
+    } else if (dynamic_cast<StringNode*> (node)){
+        StringNode* strNode = dynamic_cast<StringNode*>(node);
+        std::cout << "String literal: " << strNode->string.lexeme << std::endl; 
     } else if (dynamic_cast<ReturnStatementNode*>(node)) {
         ReturnStatementNode* returnNode = dynamic_cast<ReturnStatementNode*>(node);
         std::cout << "Return Statement" << std::endl;
@@ -63,11 +66,9 @@ void PrintAST(ASTNode* node, int indent = 0) {
 }
 
 
-// Funcion que simplemente prueba la funcionalidad del Lexer (sin necesidad de bindings/gui)
 int main(){
     Lexer lex1;
 
-    // std::vector<std::string> lines;
     std::string text;
     try {
         text = readFile("./text.txt");
@@ -76,33 +77,14 @@ int main(){
     }
 
     Lexer lex;
-    lex.analyze(text);
-    Parser pars(lex.tokens);
-    lex.printTokens();
-
     try {
-        ASTNode* ast = pars.parseProgram();
-        PrintAST(ast);
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        lex.analyze(text);
+        lex.printTokens();
+        Parser pars (lex.tokens);
+        pars.parseProgram();
+        std::cout << "valido" << std::endl;
+    } catch (const std::exception& e){
+        std::cerr << "Error" << e.what() << std::endl;
     }
-    
-    // size_t line = 0;
-    // for (auto line: lines){
-    //     Lexer lex1;
-    //     lex1.analyze(line);
-    //     Parser pars1(lex1.tokens);
-    //     std::cout << "lexer input: " << line << std::endl;
-    //     std::cout << "Tokens: " << std::endl;
-    //     lex1.printTokens();
-    //     try {
-    //         ASTNode* ast = pars1.parseProgram();
-    //         std::cout << "Abstract Syntax Tree (AST):" << std::endl;
-    //         PrintAST(ast);
-    //     } catch (const std::exception& e) {
-    //         std::cerr << "Error on line: " << line << ":"<< e.what() << std::endl;
-    //     }
-    //     line += 1;
-    // }
     return 0;
 }

@@ -53,7 +53,8 @@ int Lexer::analyze(std::string line) {
         {&leftBraceRegex, TokenTypes::LEFT_BRACKET},
         {&rightBraceRegex, TokenTypes::RIGHT_BRACKET},
         {&ifRegex, TokenTypes::IF},
-        {&identifierRegex, TokenTypes::IDENTIFIER}
+        {&identifierRegex, TokenTypes::IDENTIFIER},
+        // {&stringRegex, TokenTypes::STRING_LITERAL}
     };
 
     for (int i = 0; i < line_length;){
@@ -65,6 +66,23 @@ int Lexer::analyze(std::string line) {
        while (i < line_length && (line[i] == ' ' || line[i] == '\t' || line[i] == '\n')) {
             i++;
         }
+
+        if (line[i] == '\"') {
+            lexeme += line[i];
+            i++;
+            while (i < line_length && line[i] != '\"') {
+                lexeme += line[i];
+                i++;
+            }
+            if (i < line_length && line[i] == '\"') {
+                lexeme += line[i];
+                i++;
+                tokens.push_back(Token(TokenTypes::STRING_LITERAL, lexeme, lineNumber));
+            } else {
+                throw std::runtime_error("Error en la línea " + std::to_string(lineNumber) + ": String literal no cerrado");
+            }
+        }
+
         // Operators
         if (i < line_length && 
             std::regex_match(std::string(1, line[i]), binaryOperatorsRegex) || 
@@ -154,8 +172,10 @@ int Lexer::analyze(std::string line) {
             i++;
         }
         // Determine the token type based on the lexeme content using the map
+        bool match = false;
         for (const auto& regexPair : regexToTokenTypeMap) {
             if (!lexeme.empty() && std::regex_match(lexeme, *(regexPair.first))) { // Compare lexeme to the pattern
+                match = true;
                 type = regexPair.second;
                 if (std::regex_match(lexeme, reservedReturn)){
                     type = TokenTypes::RETURN;
@@ -163,10 +183,14 @@ int Lexer::analyze(std::string line) {
                 break;
             }
         }
+        // if (match){
+        //     throw std::runtime_error("Error en la línea " + std::to_string(lineNumber) + ": Token no válido '" + line[i] + "'");
+        // }
+
         if (!lexeme.empty()){
             tokens.push_back(Token(type, lexeme, lineNumber));
             resultingTokens++;
-        }
+        } 
     }
     tokens.push_back(Token(TokenTypes::EOF_TOKEN, "", lineNumber));
     return resultingTokens;

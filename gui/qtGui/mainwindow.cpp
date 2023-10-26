@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>
+#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -30,23 +31,38 @@ void MainWindow::on_pushButton_clicked()
         std::cerr << "Error: " << e.what() << std::endl;
     }
 
-    Lexer lex1 = Lexer();
-    lex1.analyze(text);
-    std::string tokType;
-    QString textToDisplay = "";
+    Lexer lex;
+    QString lexicalString = "";
 
+    try {
+        lex.analyze(text);
+        std::string tokType;
+        for (Token token: lex.tokens){
+            std::cout << "token: " << token.lexeme << std::endl;
+            std::string line = "";
+            tokType = tokenTypeToString(token.type);
+            line += "Token: [" + tokType + "], Lexeme: " + token.lexeme + "\n";
+            lexicalString += QString::fromStdString(line);
+        }
+    } catch(const std::exception& e){
+        lexicalString += QString::fromStdString("Lexical error: " + std::string(e.what()));
 
-    for (Token token: lex1.tokens){
-        std::string line = "";
-        tokType = tokenTypeToString(token.type);
-        line += "Token: " + tokType + ", Lexeme: " + token.lexeme + "\n";
-        textToDisplay += QString::fromStdString(line);
+    }
 
+    QString parserString = "";
+
+    try {
+        Parser pars(lex.tokens);
+        pars.parseProgram();
+        parserString = QString::fromStdString("Sentencias validas");
+    } catch (const std::exception& e){
+        parserString = QString::fromStdString("Parsing error: " + std::string(e.what()));
     }
 
 //    QString textToDisplay = QString::fromStdString(text);
 
-    ui->textBrowser->setPlainText(textToDisplay);
+    ui->textBrowser->setPlainText(lexicalString);
+    ui->textBrowser_2->setPlainText(parserString);
 
 }
 
