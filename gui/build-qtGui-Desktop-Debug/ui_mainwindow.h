@@ -93,7 +93,7 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
-        label->setText(QCoreApplication::translate("MainWindow", "Analisis sintactico", nullptr));
+        label->setText(QCoreApplication::translate("MainWindow", "Analisis lexico", nullptr));
         label_2->setText(QCoreApplication::translate("MainWindow", "Analisis sintactico", nullptr));
         pushButton->setText(QCoreApplication::translate("MainWindow", "Analizar", nullptr));
         pushButton_2->setText(QCoreApplication::translate("MainWindow", "Guardar", nullptr));

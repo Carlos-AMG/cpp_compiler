@@ -54,7 +54,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Analisis sintactico</string>
+     <string>Analisis lexico</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
