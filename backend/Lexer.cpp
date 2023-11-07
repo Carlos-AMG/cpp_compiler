@@ -2,12 +2,12 @@
 #include "utils/utils.h"
 #include <iostream>
 #include <regex>
-
+#include <unordered_map>
 
 // Definimos e inicializamos las expresiones regulares de los tokens
 const std::regex Lexer::identifierRegex("[a-zA-Z][a-zA-Z0-9]*");
 const std::regex Lexer::integerRegex("[0-9]+");
-const std::regex Lexer::realRegex("[0-9]+\\.[0-9]+");
+const std::regex Lexer::floatRegex("[0-9]+\\.[0-9]+");
 const std::regex Lexer::stringRegex("\"[^\"]*\"");
 const std::regex Lexer::additionOperatorRegex("[\\+\\-]");
 const std::regex Lexer::multiplicationOperatorRegex("[\\*/]");
@@ -21,133 +21,190 @@ const std::regex Lexer::rightParenthesisRegex("\\)");
 const std::regex Lexer::leftBraceRegex("\\{");
 const std::regex Lexer::rightBraceRegex("\\}");
 const std::regex Lexer::semicolonRegex(";");
-const std::regex Lexer::reservedWordsRegex("if|while|return|else|int|float");
+// const std::regex Lexer::reservedWordsRegex("if|while|return|else|int|float");
+const std::regex Lexer::ifRegex("if");
+const std::regex Lexer::elseRegex("else");
+const std::regex Lexer::whileRegex("while");
+const std::regex Lexer::reservedIntRegex("int");
+const std::regex Lexer::reservedFloatRegex("float");
+const std::regex Lexer::reservedReturn("return");
 
+const std::regex Lexer::binaryOperatorsRegex("[,!=%&*+-\\/-><<==>>=^|]+");
+const std::regex Lexer::unaryOperatorsRegex("[-!]|\\+\\+|--");
 
 // Funcion encargada de analizar una cadena y usando las expresiones regulares debe guardar los tokens en una lista
 // de tokens. Itera sobre la cadena y compara las expresiones para asi saber a que token pertenece
 int Lexer::analyze(std::string line) {
-    int i = 0;
+    size_t lineNumber = 1;
     int resultingTokens = 0;
-    int lineLen = line.length();
+    std::string lexeme;
+    TokenTypes type;
+    std::string delimiters = "=-+/";
+    std::string delimiters2 = "{";
+    std::string whitespaces = " \n\t";
+    int line_length = line.length();
 
-    while (i < lineLen) {
-        // Skip consecutive whitespace
-        while (i < lineLen && isspace(line[i])) {
+    std::unordered_map<const std::regex*, TokenTypes> regexToTokenTypeMap = {
+        {&integerRegex, TokenTypes::INT_LITERAL},
+        {&floatRegex, TokenTypes::FLOAT_LITERAL},
+        {&leftParenthesisRegex, TokenTypes::LEFT_PAREN},
+        {&rightParenthesisRegex, TokenTypes::RIGHT_PAREN},
+        {&reservedReturn, TokenTypes::RETURN},        
+        {&leftBraceRegex, TokenTypes::LEFT_BRACKET},
+        {&rightBraceRegex, TokenTypes::RIGHT_BRACKET},
+        {&ifRegex, TokenTypes::IF},
+        {&identifierRegex, TokenTypes::IDENTIFIER},
+        // {&stringRegex, TokenTypes::STRING_LITERAL}
+    };
+
+    for (int i = 0; i < line_length;){
+        lexeme = "";
+        // Skip whitespace characters
+        if (line[i] == '\n'){
+            lineNumber += 1;
+        }
+       while (i < line_length && (line[i] == ' ' || line[i] == '\t' || line[i] == '\n')) {
             i++;
         }
 
-        if (i >= lineLen) {
-            // Reached the end of the line, exit the loop
-            break;
+        if (line[i] == '\"') {
+            lexeme += line[i];
+            i++;
+            while (i < line_length && line[i] != '\"') {
+                lexeme += line[i];
+                i++;
+            }
+            if (i < line_length && line[i] == '\"') {
+                lexeme += line[i];
+                i++;
+                tokens.push_back(Token(TokenTypes::STRING_LITERAL, lexeme, lineNumber));
+            } else {
+                throw std::runtime_error("Error en la línea " + std::to_string(lineNumber) + ": String literal no cerrado");
+            }
         }
 
-        // Find the end of the current token
-        int lexemeEnd = i;
-
-        // Check if the current character is an operator
-        if (std::regex_match(std::string(1, line[i]), additionOperatorRegex) ||
-            std::regex_match(std::string(1, line[i]), multiplicationOperatorRegex) ||
-            std::regex_match(std::string(1, line[i]), assignmentOperatorRegex) ||
-            std::regex_match(std::string(1, line[i]), relationalOperatorRegex) ||
-            std::regex_match(std::string(1, line[i]), logicalAndOperatorRegex) ||
-            std::regex_match(std::string(1, line[i]), logicalOrOperatorRegex) ||
-            std::regex_match(std::string(1, line[i]), logicalNotOperatorRegex) ||
-            std::regex_match(std::string(1, line[i]), leftParenthesisRegex) ||
-            std::regex_match(std::string(1, line[i]), rightParenthesisRegex) ||
+        // Operators
+        if (i < line_length && 
+            std::regex_match(std::string(1, line[i]), binaryOperatorsRegex) || 
+            std::regex_match(std::string(1, line[i]), unaryOperatorsRegex)){
+                lexeme += line[i];
+                // Set the appropriate token type based on the matched operator
+                switch (line[i])
+                {
+                    case '+':
+                        type = TokenTypes::ADDITION_OP;
+                        if (line[i+1] == '+'){
+                            lexeme += line[++i];
+                            type = TokenTypes::PLUS_PLUS_OP;
+                        }
+                        break;
+                    case '-':
+                        type = TokenTypes::SUBTRACTION_OP; 
+                        if (line[i+1] == '-'){
+                            lexeme += line[i++];
+                            type = TokenTypes::MINUS_MINUS_OP;
+                        }              
+                        break;
+                    case '=':
+                        type = TokenTypes::ASSIGNMENT_OP;
+                        if (line[i+1] == '='){
+                            lexeme += line[i++];
+                            type = TokenTypes::EQUALITY_OP;
+                        }     
+                        break; 
+                    case '/':
+                        type = TokenTypes::DIVISION_OP;
+                        break;
+                    case '*':
+                        type = TokenTypes::MULTIPLICATION_OP;
+                        break; 
+                    case '>':
+                        type = TokenTypes::MORE_THAN_OP;
+                        break;
+                    case '<':
+                        type = TokenTypes::LESS_THAN_OP;
+                        break;
+                    case '!':
+                        type = TokenTypes::NOT_OP;
+                        if (line[i+1] == '='){
+                            lexeme += line[++i];
+                            type = TokenTypes::INEQUALITY_OP;
+                        } 
+                        break;
+                      
+                }
+                i++;
+                tokens.push_back(Token(type, lexeme, lineNumber));
+                continue;
+        }
+        if (i < line_length && 
             std::regex_match(std::string(1, line[i]), leftBraceRegex) ||
-            std::regex_match(std::string(1, line[i]), rightBraceRegex) ||
-            std::regex_match(std::string(1, line[i]), semicolonRegex)) {
-            
-            if (std::regex_match(std::string(1, line[i]), logicalOrOperatorRegex)){
-                std::string currentOperator(1, line[i]);
-                i++;
-                if (std::regex_match(std::string(1, line[i]), logicalOrOperatorRegex)){
-                    currentOperator += line[i];
-                    this->tokens.push_back(Token("OPERATOR", currentOperator));
-                    continue;
+            std::regex_match(std::string(1, line[i]), leftBraceRegex) ||
+            std::regex_match(std::string(1, line[i]), leftParenthesisRegex) || 
+            std::regex_match(std::string(1, line[i]), rightParenthesisRegex) ||
+            line[i] == ';'){
+            lexeme += line[i];
+            switch (line[i])
+                {
+                    case '{':
+                        type = TokenTypes::LEFT_BRACKET;
+                        break;
+                    case '}':
+                        type = TokenTypes::RIGHT_BRACKET;        
+                        break;  
+                    case '(':
+                        type = TokenTypes::LEFT_PAREN;
+                        break;
+                    case ')':
+                        type = TokenTypes::RIGHT_PAREN;        
+                        break;  
+                    case ';':
+                        type = TokenTypes::SEMICOLON;        
+                        break;  
                 }
-            }
-            else if (std::regex_match(std::string(1, line[i]), logicalAndOperatorRegex)){
-                std::string currentOperator(1, line[i]);
                 i++;
-                if (std::regex_match(std::string(1, line[i]), logicalAndOperatorRegex)){
-                    currentOperator += line[i];
-                    this->tokens.push_back(Token("OPERATOR", currentOperator));
-                    continue;
+                tokens.push_back(Token(type, lexeme, lineNumber));
+                continue;
+        }
+        // Continue building the lexeme until a delimiter is encountered
+        while (i < line_length && whitespaces.find(line[i]) == std::string::npos && delimiters.find(line[i]) == std::string::npos) {
+            lexeme += line[i];
+            i++;
+        }
+        // Determine the token type based on the lexeme content using the map
+        bool match = false;
+        for (const auto& regexPair : regexToTokenTypeMap) {
+            if (!lexeme.empty() && std::regex_match(lexeme, *(regexPair.first))) { // Compare lexeme to the pattern
+                match = true;
+                type = regexPair.second;
+                if (std::regex_match(lexeme, reservedReturn)){
+                    type = TokenTypes::RETURN;
                 }
+                break;
             }
-            
-            std::string currentOperator(1, line[i]);
-            this->tokens.push_back(Token("OPERATOR", currentOperator));
+        }
+        // if (match){
+        //     throw std::runtime_error("Error en la línea " + std::to_string(lineNumber) + ": Token no válido '" + line[i] + "'");
+        // }
+
+        if (!lexeme.empty()){
+            tokens.push_back(Token(type, lexeme, lineNumber));
             resultingTokens++;
-            i++; // Move to the next character
-        }
-        else {
-            // Find the end of the current token (lexemeEnd)
-            while (lexemeEnd < lineLen && !isspace(line[lexemeEnd]) &&
-                !std::regex_match(std::string(1, line[lexemeEnd]), additionOperatorRegex) &&
-                !std::regex_match(std::string(1, line[lexemeEnd]), multiplicationOperatorRegex) &&
-                !std::regex_match(std::string(1, line[lexemeEnd]), assignmentOperatorRegex) &&
-                !std::regex_match(std::string(1, line[lexemeEnd]), relationalOperatorRegex) &&
-                !std::regex_match(std::string(1, line[lexemeEnd]), logicalAndOperatorRegex) &&
-                !std::regex_match(std::string(1, line[lexemeEnd]), logicalOrOperatorRegex) &&
-                !std::regex_match(std::string(1, line[lexemeEnd]), logicalNotOperatorRegex) &&
-                !std::regex_match(std::string(1, line[lexemeEnd]), leftParenthesisRegex) &&
-                !std::regex_match(std::string(1, line[lexemeEnd]), rightParenthesisRegex) &&
-                !std::regex_match(std::string(1, line[lexemeEnd]), leftBraceRegex) &&
-                !std::regex_match(std::string(1, line[lexemeEnd]), rightBraceRegex) &&
-                !std::regex_match(std::string(1, line[lexemeEnd]), semicolonRegex)) {
-                lexemeEnd++;
-            }
-
-            // Extract the current token as a substring
-            std::string currentLexeme = line.substr(i, lexemeEnd - i);
-            std::cout << "lexeme: " << currentLexeme << std::endl;
-
-            if (std::regex_match(currentLexeme, reservedWordsRegex)) {
-                if (std::regex_search(currentLexeme, reservedWordsRegex)) {
-                    this->tokens.push_back(Token("RESERVED", currentLexeme));
-                    resultingTokens++;
-                } else {
-                    // Handle the case where there's no match (error)
-                    std::cerr << "Lexical Error: Unexpected characters starting with '" << line[i] << "'" << std::endl;
-                    // i++; // Skip the invalid character
-                }
-            }
-            else if (std::regex_match(currentLexeme, integerRegex)) {
-                this->tokens.push_back(Token("INTEGER", currentLexeme));
-                resultingTokens++;
-            }
-            else if (std::regex_match(currentLexeme, realRegex)) {
-                this->tokens.push_back(Token("FLOAT", currentLexeme));
-                resultingTokens++;
-            }
-            else if (std::regex_match(currentLexeme, identifierRegex)) {
-                this->tokens.push_back(Token("IDENTIFIER", currentLexeme));
-                resultingTokens++;
-            }
-            else {
-                // error
-                // pending error class
-                std::cerr << "Lexical Error: character: '" << line[i] << "' is not valid in the source code" << std::endl;
-                // i++; // Skip the invalid character
-            }
-
-            i = lexemeEnd;
-        }
+        } 
     }
-
+    tokens.push_back(Token(TokenTypes::EOF_TOKEN, "", lineNumber));
     return resultingTokens;
 }
 
 
 void Lexer::printTokens(){
+    std::string typeName;
     for (auto token : this->tokens){
-        std::cout << "Token: " << token.name << ", Lexeme: " << token.value << std::endl;
+        typeName = tokenTypeToString(token.type);
+        std::cout << "Type: " << typeName << ", Lexeme: " <<  token.lexeme << ", line: " << token.lineNumber << std::endl;
     }
 }
 
-std::vector<Token> Lexer::getTokens(){
-    return this->tokens;
-}
+// std::vector<Token> Lexer::getTokens(){
+//     return this->tokens;
+// }
