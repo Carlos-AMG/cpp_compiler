@@ -7,6 +7,14 @@
 
 Parser::Parser(const std::vector<Token> & inputTokens): tokens{inputTokens}, curr_idx{0}{}
 
+Token Parser::peek() {
+    size_t next_idx = curr_idx + 1;
+    if (next_idx < tokens.size()) {
+        return tokens[next_idx];
+    }
+    return {TokenTypes::EOF_TOKEN, ""};
+}
+
 Token Parser::currentToken(){
     if (curr_idx < tokens.size()){
         return tokens[curr_idx];
@@ -35,11 +43,11 @@ ASTNode* Parser::parseStatement() {
         return parseIfStatement();
     } else if (currentToken().type == TokenTypes::RETURN) {
         return parseReturnStatement();
-    } else if (currentToken().type == TokenTypes::ASSIGNMENT_OP) {
+    } else if (currentToken().type == TokenTypes::IDENTIFIER && peek().type == TokenTypes::ASSIGNMENT_OP) {
         return parseAssignment();
     }
 
-    // Si no coincide con ninguno de los tipos de declaración anteriores, asumir que es una expresión
+    // If it doesn't match any of the above statement types, assume it's an expression.
     return parseExpression();
 }
 
@@ -92,7 +100,7 @@ ASTNode* Parser::parseBlock() {
 
 ASTNode* Parser::parseAssignment() {
     Token identifierToken = currentToken();
-    // advance();  // Avanzar al identificador
+    advance();  // Avanzar al identificador
     if (currentToken().type == TokenTypes::ASSIGNMENT_OP) {
         advance();  // Avanzar al operador de asignación
         ASTNode* expression = parseExpression();

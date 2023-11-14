@@ -3,6 +3,7 @@
 #include <string>
 
 enum class TokenTypes{
+    NULLT,
     IDENTIFIER,
     INT_LITERAL,
     FLOAT_LITERAL,

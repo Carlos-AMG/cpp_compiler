@@ -7,7 +7,8 @@ void SymbolTable::insert(const std::string& identifier, TokenTypes type) {
 
 Symbol SymbolTable::lookup(const std::string& identifier) {
     if (symbols.find(identifier) == symbols.end()) {
-        throw std::runtime_error("Identifier not found in symbol table");
+        // throw std::runtime_error("Identifier not found in symbol table");
+        return Symbol("null", TokenTypes::NULLT);
     }
     return symbols[identifier];
 }

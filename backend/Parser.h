@@ -109,6 +109,7 @@ struct Parser{
     ASTNode* parseIfStatement();
     ASTNode* parseBlock();
 
+    Token peek();
     Parser(const std::vector<Token> & inputTokens);
 };
 

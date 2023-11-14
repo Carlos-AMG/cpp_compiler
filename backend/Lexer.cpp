@@ -54,8 +54,11 @@ int Lexer::analyze(std::string line) {
         {&rightBraceRegex, TokenTypes::RIGHT_BRACKET},
         {&ifRegex, TokenTypes::IF},
         {&identifierRegex, TokenTypes::IDENTIFIER},
+        {&reservedIntRegex, TokenTypes::INTEGER},
+        {&reservedFloatRegex, TokenTypes::FLOAT}
         // {&stringRegex, TokenTypes::STRING_LITERAL}
     };
+    
 
     for (int i = 0; i < line_length;){
         lexeme = "";
@@ -66,6 +69,23 @@ int Lexer::analyze(std::string line) {
        while (i < line_length && (line[i] == ' ' || line[i] == '\t' || line[i] == '\n')) {
             i++;
         }
+
+        // size_t start = 0;
+        // if (line[i] == '\"'){
+        //     while ((start = line.find('\"', start)) != std::string::npos) {
+        //         size_t end = line.find('\"', start + 1);
+        //         if (end == std::string::npos) {
+        //             std::cerr << "Error: String no cerrado correctamente." << std::endl;
+        //             break;
+        //         }
+        //         std::string extractedString = line.substr(start + 1, end - start - 1);
+        //         lexeme += extractedString;
+        //         start = end + 1;
+        //     }
+        //     tokens.push_back(Token(TokenTypes::STRING_LITERAL, lexeme, lineNumber));
+        //     continue;
+        // }
+
 
         if (line[i] == '\"') {
             lexeme += line[i];
@@ -78,6 +98,7 @@ int Lexer::analyze(std::string line) {
                 lexeme += line[i];
                 i++;
                 tokens.push_back(Token(TokenTypes::STRING_LITERAL, lexeme, lineNumber));
+                continue;
             } else {
                 throw std::runtime_error("Error en la línea " + std::to_string(lineNumber) + ": String literal no cerrado");
             }

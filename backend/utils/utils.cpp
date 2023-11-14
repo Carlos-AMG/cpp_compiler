@@ -81,6 +81,12 @@ std::string tokenTypeToString(TokenTypes type) {
             return "RIGHT_BRACKET";
         case TokenTypes::EOF_TOKEN:
             return "EOF";
+        case TokenTypes::FLOAT:
+            return "FLOAT";
+        case TokenTypes::INTEGER:
+            return "INTEGER";
+        case TokenTypes::STRING_LITERAL:
+            return "STRING_LITERAL";
         default:
             break;
         }

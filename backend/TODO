@@ -1,0 +1,2 @@
+TODO: arreglar que cuando sacamos nodos sean dinamicos, es decir no tengamos que hacer static_cast hardcodeado
+TODO: arreglar parseStatement, ya que 1 = <expression> es valido, un identificador debe ir a la izquierda
