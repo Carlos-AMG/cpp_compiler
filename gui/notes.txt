@@ -1,1 +1,0 @@
-posible modificacion a parseProgram que avance en vez de estar avanzando en cada funcion

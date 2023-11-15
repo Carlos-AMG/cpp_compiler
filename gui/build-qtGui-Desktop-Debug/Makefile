@@ -57,6 +57,8 @@ SOURCES       = ../qtGui/main.cpp \
 		../../backend/Lexer.cpp \
 		../../backend/Parser.cpp \
 		../../backend/Token.cpp \
+		../../SymbolTable.cpp \
+		../../Symbol.cpp \
 		../../backend/utils/utils.cpp moc_mainwindow.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
@@ -64,6 +66,8 @@ OBJECTS       = main.o \
 		Parser.o \
 		Token.o \
 		utils.o \
+		Symbol.o \
+		SymbolTable.o \
 		moc_mainwindow.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
