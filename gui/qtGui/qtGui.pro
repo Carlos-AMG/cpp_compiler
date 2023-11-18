@@ -11,18 +11,23 @@ CONFIG += c++11
 # Add your source files for the non-Qt code here
 SOURCES += \
     ./main.cpp \
-    ./mainwindow.cpp \ 
-    # Add other source files for the non-Qt code as needed
+    ./mainwindow.cpp \
     ../../backend/Lexer.cpp \
     ../../backend/Parser.cpp \
     ../../backend/Token.cpp \ 
     ../../backend/utils/utils.cpp \ 
+    ../../backend/SemanticParser.cpp \
+    ../../backend/Symbol.cpp \
+    ../../backend/SymbolTable.cpp 
 
 HEADERS += \
     mainwindow.h \
     ../../backend/Lexer.h \
     ../../backend/Parser.h \
     ../../backend/Token.h \ 
+    ../../backend/SemanticParser.h \
+    ../../backend/Symbol.h \
+    ../../backend/SymbolTable.h \
     ../../backend/utils/utils.h
 
 FORMS += \

@@ -3,7 +3,7 @@
 #include "../../backend/Parser.h"
 #include "../../backend/utils/utils.h"
 #include "../../backend/Token.h"
-#include "../../SymbolTable.h"
+#include "../../backend/SymbolTable.h"
 #include "ui_mainwindow.h"
 #include <QFile>
 #include <QTextStream>
@@ -11,7 +11,7 @@
 #include <iostream>
 
 bool error = false; 
-Qstring semanticString = "";
+QString semanticString = "";
 
 
 Token validateTree(ASTNode* node, SymbolTable& table) {
@@ -35,14 +35,14 @@ Token validateTree(ASTNode* node, SymbolTable& table) {
 
         if (binOpNode->op_tok.type == TokenTypes::DIVISION_OP && rhs.lexeme == "0") {
             // std::cout << "Error: División entre cero, en la línea: " << binOpNode->op_tok.lineNumber << std::endl;
-            semanticString += ("Error: División entre cero, en la línea: " + std::to_string(binOpNode->op_tok.lineNumber) + "\n");
-            // Puedes lanzar una excepción aquí si lo prefieres
-            // throw std::runtime_error("División entre cero");
+            error = true;
+            semanticString += "Error: División entre cero, en la línea: " + QString::number(binOpNode->op_tok.lineNumber) + "\n";
         }
 
         if (lhs.type != rhs.type) {
             // std::cout << "Error: Tipos incompatibles en la línea: " << binOpNode->op_tok.lineNumber << std::endl;
-            semanticString += ("Error: Tipos incompatibles en la línea: " + std::to_string(binOpNode->op_tok.lineNumber)) + "\n";
+            semanticString += "Error: Tipos incompatibles en la linea: " + QString::number(binOpNode->op_tok.lineNumber) + "\n";
+            error = true;
 
             // Puedes lanzar una excepción aquí si lo prefieres
             // throw std::runtime_error("Tipos incompatibles");
@@ -64,7 +64,10 @@ Token validateTree(ASTNode* node, SymbolTable& table) {
         auto identifier = table.lookup(idNode->identifier.lexeme);
         if (identifier.type == TokenTypes::NULLT) {
             // std::cout << "Error: Variable no declarada: " << idNode->identifier.lexeme << " en la línea: " << idNode->identifier.lineNumber << std::endl;
-            semanticString += ("Error: Variable no declarada: " + std::to_string(idNode->identifier.lexeme)  + " en la línea: " + std::to_string(idNode->identifier.lineNumber));
+            // semanticString += ("Error: Variable no declarada: " + Qstring::number(idNode->identifier.lexeme)  + " en la línea: " + Qstring::number(idNode->identifier.lineNumber) + "\n");
+            semanticString += "Error: Variable no declarada: " + QString::fromStdString(idNode->identifier.lexeme) + " en la linea: " + QString::number(idNode->identifier.lineNumber)  + "\n";
+            
+            error = true;
             
             // Puedes lanzar una excepción aquí si lo prefieres
             // throw std::runtime_error("Variable no declarada");
@@ -130,26 +133,25 @@ void MainWindow::on_pushButton_clicked()
         lexicalString += QString::fromStdString("Lexical error: " + std::string(e.what()));
     }
 
-
     try {
+        semanticString = "";
+        error = false;
         Parser pars(lex.tokens);
-        pars.parseProgram();
+        auto tree = pars.parseProgram();  // Assuming parseProgram returns the root of the parse tree
         parserString = QString::fromStdString("Sentencias validas");
+        validateTree(tree, table1);
+        if (!error)
+            semanticString = "valido";
+
     } catch (const std::exception& e){
         parserString = QString::fromStdString("Parsing error: " + std::string(e.what()));
     }
 
-    validateTree(tree, table1)
-    // try {
-    //     validateTree(tree, table1);
-
-    // }
-
    QString textToDisplay = QString::fromStdString(text);
 
     ui->textBrowser->setPlainText(lexicalString);
-    ui->textBrowser_2->setPlainText(semanticString);
-
+    ui->textBrowser_2->setPlainText(parserString);
+    ui->textBrowser_3->setPlainText(semanticString);
 }
 
 

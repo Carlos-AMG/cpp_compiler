@@ -37,7 +37,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = qtGui1.0.0
-DISTDIR = /home/nikaido/school/sixth/cpp_compiler/gui/build-qtGui-Desktop-Debug/.tmp/qtGui1.0.0
+DISTDIR = /home/nikaido/school/sixth/trad2/cpp_compiler/gui/build-qtGui-Desktop-Debug/.tmp/qtGui1.0.0
 LINK          = g++
 LFLAGS        = 
 LIBS          = $(SUBLIBS) /usr/lib/x86_64-linux-gnu/libQt5Widgets.so /usr/lib/x86_64-linux-gnu/libQt5Gui.so /usr/lib/x86_64-linux-gnu/libQt5Core.so -lGL -lpthread   
@@ -57,15 +57,17 @@ SOURCES       = ../qtGui/main.cpp \
 		../../backend/Lexer.cpp \
 		../../backend/Parser.cpp \
 		../../backend/Token.cpp \
-		../../SymbolTable.cpp \
-		../../Symbol.cpp \
-		../../backend/utils/utils.cpp moc_mainwindow.cpp
+		../../backend/utils/utils.cpp \
+		../../backend/SemanticParser.cpp \
+		../../backend/Symbol.cpp \
+		../../backend/SymbolTable.cpp moc_mainwindow.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		Lexer.o \
 		Parser.o \
 		Token.o \
 		utils.o \
+		SemanticParser.o \
 		Symbol.o \
 		SymbolTable.o \
 		moc_mainwindow.o
@@ -155,12 +157,18 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		../../backend/Lexer.h \
 		../../backend/Parser.h \
 		../../backend/Token.h \
+		../../backend/SemanticParser.h \
+		../../backend/Symbol.h \
+		../../backend/SymbolTable.h \
 		../../backend/utils/utils.h ../qtGui/main.cpp \
 		../qtGui/mainwindow.cpp \
 		../../backend/Lexer.cpp \
 		../../backend/Parser.cpp \
 		../../backend/Token.cpp \
-		../../backend/utils/utils.cpp
+		../../backend/utils/utils.cpp \
+		../../backend/SemanticParser.cpp \
+		../../backend/Symbol.cpp \
+		../../backend/SymbolTable.cpp
 QMAKE_TARGET  = qtGui
 DESTDIR       = 
 TARGET        = qtGui
@@ -354,8 +362,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../qtGui/mainwindow.h ../../backend/Lexer.h ../../backend/Parser.h ../../backend/Token.h ../../backend/utils/utils.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../qtGui/main.cpp ../qtGui/mainwindow.cpp ../../backend/Lexer.cpp ../../backend/Parser.cpp ../../backend/Token.cpp ../../backend/utils/utils.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../qtGui/mainwindow.h ../../backend/Lexer.h ../../backend/Parser.h ../../backend/Token.h ../../backend/SemanticParser.h ../../backend/Symbol.h ../../backend/SymbolTable.h ../../backend/utils/utils.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../qtGui/main.cpp ../qtGui/mainwindow.cpp ../../backend/Lexer.cpp ../../backend/Parser.cpp ../../backend/Token.cpp ../../backend/utils/utils.cpp ../../backend/SemanticParser.cpp ../../backend/Symbol.cpp ../../backend/SymbolTable.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../qtGui/mainwindow.ui $(DISTDIR)/
 
 
@@ -394,7 +402,7 @@ compiler_moc_header_clean:
 moc_mainwindow.cpp: ../qtGui/mainwindow.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/nikaido/school/sixth/cpp_compiler/gui/build-qtGui-Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/nikaido/school/sixth/cpp_compiler/gui/qtGui -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../qtGui/mainwindow.h -o moc_mainwindow.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/nikaido/school/sixth/trad2/cpp_compiler/gui/build-qtGui-Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/nikaido/school/sixth/trad2/cpp_compiler/gui/qtGui -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../qtGui/mainwindow.h -o moc_mainwindow.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -429,6 +437,8 @@ mainwindow.o: ../qtGui/mainwindow.cpp ../qtGui/mainwindow.h \
 		../../backend/Token.h \
 		../../backend/Parser.h \
 		../../backend/utils/utils.h \
+		../../backend/SymbolTable.h \
+		../../backend/Symbol.h \
 		ui_mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../qtGui/mainwindow.cpp
 
@@ -438,14 +448,28 @@ Lexer.o: ../../backend/Lexer.cpp ../../backend/Lexer.h \
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Lexer.o ../../backend/Lexer.cpp
 
 Parser.o: ../../backend/Parser.cpp ../../backend/Parser.h \
-		../../backend/Token.h
+		../../backend/Token.h \
+		../../backend/utils/utils.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Parser.o ../../backend/Parser.cpp
 
 Token.o: ../../backend/Token.cpp ../../backend/Token.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Token.o ../../backend/Token.cpp
 
-utils.o: ../../backend/utils/utils.cpp ../../backend/utils/utils.h
+utils.o: ../../backend/utils/utils.cpp ../../backend/utils/utils.h \
+		../../backend/Token.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o utils.o ../../backend/utils/utils.cpp
+
+SemanticParser.o: ../../backend/SemanticParser.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o SemanticParser.o ../../backend/SemanticParser.cpp
+
+Symbol.o: ../../backend/Symbol.cpp ../../backend/Symbol.h \
+		../../backend/Token.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Symbol.o ../../backend/Symbol.cpp
+
+SymbolTable.o: ../../backend/SymbolTable.cpp ../../backend/SymbolTable.h \
+		../../backend/Token.h \
+		../../backend/Symbol.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o SymbolTable.o ../../backend/SymbolTable.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp

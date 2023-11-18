@@ -1,4 +1,5 @@
 // #include "Parser.h"
+// #include "Parser.h
 #include "Parser.h"
 #include "utils/utils.h"
 #include <iostream>
@@ -232,7 +233,6 @@ ASTNode* Parser::parsePrimary() {
 }
 
 ASTNode* Parser::parseReturnStatement() {
-    std::cout << "reyes no tiene manjaro" << std::endl;
     advance();  // Avanzar al token RESERVED_RETURN
     ASTNode* expression = parseExpression();
     if (currentToken().type == TokenTypes::SEMICOLON) {

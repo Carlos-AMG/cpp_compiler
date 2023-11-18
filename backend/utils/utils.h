@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include "../Token.h"
-#include "Parser.h"
+#include "../Parser.h"
 
 bool isOperator(char character);
 std::string readFile(const std::string & filePath);
